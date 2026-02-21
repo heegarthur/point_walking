@@ -16,10 +16,23 @@ function generateLocation(position) {
 
 
     const R = 6371;
-    const min_km = Number(localStorage.getItem("maxDistance"))||1;
-    const max_km = Number(localStorage.getItem("minDistance"))||3;
+    function parseKm(value, fallback) {
+        if (!value) return fallback
+        const fixed = value.replace(",", ".")
+        const num = parseFloat(fixed)
+        return isNaN(num) ? fallback : num
+    }
 
-    const distance = Math.random() * (max_km - min_km) + min_km;
+    const rawMin = parseKm(localStorage.getItem("minDistance"), 0)
+    const rawMax = parseKm(localStorage.getItem("maxDistance"), 1)
+
+    const min = Math.min(rawMin, rawMax)
+    const max = Math.max(rawMin, rawMax)
+
+    const distance = Math.random() * (max - min) + min
+
+    console.log("min:", min, "max:", max, "distance:", distance)
+    
     const bearing = Math.random() * 2 * Math.PI;
 
     const lat1 = myLat * Math.PI / 180;
@@ -39,6 +52,7 @@ function generateLocation(position) {
     document.getElementById("output").innerHTML = ` <a href="${url}" target="_blank">Location url</a><br><br>
                                                     Your location:<br>Lat: ${myLat.toFixed(5)}, Lon: ${myLon.toFixed(5)}<br><br>
                                                     Chosen point:<br>Lat: ${newLat.toFixed(5)}, Lon: ${newLon.toFixed(5)}`;
+    
 }
 
 function showError(error) {
@@ -72,5 +86,5 @@ function updateDistance() {
 maxDistance.addEventListener("change", updateDistance);
 minDistance.addEventListener("change", updateDistance);
 
-maxDistance.value = localStorage.getItem("maxDistance")||1;
-minDistance.value = localStorage.getItem("minDistance")||3;
+maxDistance.value = localStorage.getItem("maxDistance") || 3;
+minDistance.value = localStorage.getItem("minDistance") || 1;
