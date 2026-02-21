@@ -7,13 +7,17 @@ function getLocation() {
     }
 }
 
+
+
 function generateLocation(position) {
-    const myLat = position.coords.latitude;
-    const myLon = position.coords.longitude;
+    let myLat = position.coords.latitude;
+    let myLon = position.coords.longitude;
+
+
 
     const R = 6371;
-    const min_km = 2;
-    const max_km = 3;
+    const min_km = Number(localStorage.getItem("maxDistance"))||1;
+    const max_km = Number(localStorage.getItem("minDistance"))||3;
 
     const distance = Math.random() * (max_km - min_km) + min_km;
     const bearing = Math.random() * 2 * Math.PI;
@@ -32,8 +36,9 @@ function generateLocation(position) {
     const url = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${newLat},${newLon}`;
     window.open(url, '_blank');
 
-    document.getElementById("output").innerHTML = `Your location:<br>Lat: ${myLat.toFixed(5)}, Lon: ${myLon.toFixed(5)}<br><br>
-                                                   Chosen point:<br>Lat: ${newLat.toFixed(5)}, Lon: ${newLon.toFixed(5)}`;
+    document.getElementById("output").innerHTML = ` <a href="${url}" target="_blank">Location url</a><br><br>
+                                                    Your location:<br>Lat: ${myLat.toFixed(5)}, Lon: ${myLon.toFixed(5)}<br><br>
+                                                    Chosen point:<br>Lat: ${newLat.toFixed(5)}, Lon: ${newLon.toFixed(5)}`;
 }
 
 function showError(error) {
@@ -52,3 +57,20 @@ function showError(error) {
             break;
     }
 }
+
+
+let maxDistance = document.getElementById("maxDistance")
+let minDistance = document.getElementById("minDistance")
+
+function updateDistance() {
+    let maxDistanceValue = document.getElementById("maxDistance").value;
+    let minDistanceValue = document.getElementById("minDistance").value;
+    localStorage.setItem("maxDistance", maxDistanceValue);
+    localStorage.setItem("minDistance", minDistanceValue);
+}
+
+maxDistance.addEventListener("change", updateDistance);
+minDistance.addEventListener("change", updateDistance);
+
+maxDistance.value = localStorage.getItem("maxDistance")||1;
+minDistance.value = localStorage.getItem("minDistance")||3;
